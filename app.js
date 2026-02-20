@@ -127,5 +127,5 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-setInterval(renderFeed, 5000);
+setInterval(renderFeed, 3000);
 renderFeed();

@@ -97,5 +97,5 @@ clearAllBtn.onclick = async () => {
   render();
 };
 
-setInterval(render, 5000);
+setInterval(render, 3000);
 render();
