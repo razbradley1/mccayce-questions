@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Ask a Question</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header>
+        <h1>Ask a Question</h1>
+      </header>
+
+      <form id="questionForm" class="card">
+        <textarea
+          id="question"
+          name="question"
+          rows="6"
+          maxlength="1200"
+          placeholder="Type your question here..."
+          aria-label="Question"
+          required
+        ></textarea>
+
+        <button type="submit" id="submitBtn">Send Question</button>
+        <p id="status" class="status" aria-live="polite"></p>
+      </form>
+
+      <section class="card feed">
+        <h2>Top Questions</h2>
+        <div id="questionFeed" class="list"></div>
+        <p id="feedEmpty" class="sub">No questions yet.</p>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
