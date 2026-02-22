@@ -127,5 +127,20 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-setInterval(renderFeed, 3000);
+const POLL_MS_VISIBLE = 10000;
+const POLL_MS_HIDDEN = 30000;
+let pollTimer = null;
+
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  const ms = document.hidden ? POLL_MS_HIDDEN : POLL_MS_VISIBLE;
+  pollTimer = setInterval(renderFeed, ms);
+}
+
+document.addEventListener("visibilitychange", () => {
+  startPolling();
+  if (!document.hidden) renderFeed();
+});
+
+startPolling();
 renderFeed();

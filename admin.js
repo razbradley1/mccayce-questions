@@ -97,5 +97,20 @@ clearAllBtn.onclick = async () => {
   render();
 };
 
-setInterval(render, 3000);
+const POLL_MS_VISIBLE = 6000;
+const POLL_MS_HIDDEN = 30000;
+let pollTimer = null;
+
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  const ms = document.hidden ? POLL_MS_HIDDEN : POLL_MS_VISIBLE;
+  pollTimer = setInterval(render, ms);
+}
+
+document.addEventListener("visibilitychange", () => {
+  startPolling();
+  if (!document.hidden) render();
+});
+
+startPolling();
 render();
