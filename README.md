@@ -24,14 +24,33 @@ Built for live church Q&A moments (sermon series, panel nights, youth events, to
 
 - A GitHub account
 - A Vercel account (free works)
+- A running NocoDB instance you control
+- A NocoDB API token scoped to only this app/base
 - This repo in your GitHub account
 
-### 2) Import to Vercel
+### 2) Create your NocoDB table
+
+Create a table named `questions` with these columns:
+
+- `id` (ID / primary key)
+- `qid` (SingleLineText) — public question ID
+- `text` (LongText)
+- `votes` (Number)
+- `hidden` (Checkbox)
+
+> Note: System columns like CreatedAt/UpdatedAt are fine and used for sorting.
+
+### 3) Import to Vercel
 
 1. Go to [https://vercel.com/new](https://vercel.com/new)
 2. Import `simple-church-qanda` (or your forked copy)
 3. Keep defaults (no special framework settings needed)
-4. Click **Deploy**
+4. Add these Environment Variables in Vercel Project Settings:
+   - `NOCO_URL` → `https://your-nocodb-domain.com`
+   - `NOCO_BASE_ID` → your base/project ID
+   - `NOCO_TABLE_ID` → your questions table ID
+   - `NOCO_TOKEN` → your NocoDB API token
+5. Click **Deploy**
 
 That’s it — you’ll get a live URL in about a minute.
 
@@ -72,6 +91,9 @@ Keep the admin page open on a laptop for moderation.
 - `admin.html` is currently public if someone guesses the URL.
   - Recommended next step: add admin auth (password or SSO).
 - Votes are one-per-question per browser/device (local browser lock).
+- Never commit NocoDB credentials into git.
+  - Keep `NOCO_TOKEN` only in Vercel environment variables.
+  - If a token was ever shared in chat/logs, rotate it.
 
 ---
 
