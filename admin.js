@@ -45,44 +45,66 @@ function visibilityLabel(q) {
   return q.hidden ? "HIDDEN" : "LIVE";
 }
 
+function renderSectionTitle(text) {
+  const title = document.createElement("p");
+  title.className = "sub";
+  title.style.margin = "0.2rem 0 0.1rem";
+  title.style.fontWeight = "700";
+  title.textContent = text;
+  return title;
+}
+
+function buildCard(q) {
+  const card = document.createElement("article");
+  card.className = "item";
+  card.innerHTML = `
+    <div class="meta">⬆️ ${q.votes} · ${fmtDate(q.createdAt)} · <strong>${visibilityLabel(q)}</strong></div>
+    <p class="q"></p>
+    <div class="row">
+      <button data-action="hide">Hide</button>
+      <button data-action="unhide">Unhide</button>
+      <button data-action="delete">Delete</button>
+    </div>
+  `;
+
+  card.querySelector(".q").textContent = q.text;
+
+  card.querySelector('[data-action="hide"]').onclick = async () => {
+    await patchAction(q.id, "hide");
+    render();
+  };
+  card.querySelector('[data-action="unhide"]').onclick = async () => {
+    await patchAction(q.id, "unhide");
+    render();
+  };
+  card.querySelector('[data-action="delete"]').onclick = async () => {
+    await deleteQuestion(q.id);
+    render();
+  };
+
+  return card;
+}
+
 async function render() {
   try {
     const items = (await loadQuestions())
       .map((q) => ({ ...q, votes: Number(q.votes || 0), hidden: !!(q.hidden || q.muted || q.blinded) }))
       .sort((a, b) => (b.votes - a.votes) || (new Date(b.createdAt) - new Date(a.createdAt)));
 
+    const liveItems = items.filter((q) => !q.hidden);
+    const hiddenItems = items.filter((q) => q.hidden);
+
     listEl.innerHTML = "";
     emptyEl.style.display = items.length ? "none" : "block";
 
-    for (const q of items) {
-      const card = document.createElement("article");
-      card.className = "item";
-      card.innerHTML = `
-        <div class="meta">⬆️ ${q.votes} · ${fmtDate(q.createdAt)} · <strong>${visibilityLabel(q)}</strong></div>
-        <p class="q"></p>
-        <div class="row">
-          <button data-action="hide">Hide</button>
-          <button data-action="unhide">Unhide</button>
-          <button data-action="delete">Delete</button>
-        </div>
-      `;
+    if (liveItems.length) {
+      listEl.appendChild(renderSectionTitle(`Live (${liveItems.length})`));
+      for (const q of liveItems) listEl.appendChild(buildCard(q));
+    }
 
-      card.querySelector(".q").textContent = q.text;
-
-      card.querySelector('[data-action="hide"]').onclick = async () => {
-        await patchAction(q.id, "hide");
-        render();
-      };
-      card.querySelector('[data-action="unhide"]').onclick = async () => {
-        await patchAction(q.id, "unhide");
-        render();
-      };
-      card.querySelector('[data-action="delete"]').onclick = async () => {
-        await deleteQuestion(q.id);
-        render();
-      };
-
-      listEl.appendChild(card);
+    if (hiddenItems.length) {
+      listEl.appendChild(renderSectionTitle(`Hidden (${hiddenItems.length})`));
+      for (const q of hiddenItems) listEl.appendChild(buildCard(q));
     }
   } catch {
     listEl.innerHTML = "";
