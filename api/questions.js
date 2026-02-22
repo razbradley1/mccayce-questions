@@ -1,5 +1,5 @@
-const PRIMARY_DB_URL = "https://jsonblob.com/api/jsonBlob/019c7e30-b15e-7b3d-a948-9c49c13610dc";
-const BACKUP_DB_URL = "https://jsonblob.com/api/jsonBlob/019c7e3f-de16-7c2a-a2b6-8ee642de7b1d";
+const PRIMARY_DB_URL = process.env.PRIMARY_DB_URL || "https://jsonblob.com/api/jsonBlob/019c8616-d103-7eef-b26c-4ff080760878";
+const BACKUP_DB_URL = process.env.BACKUP_DB_URL || "https://jsonblob.com/api/jsonBlob/019c8616-dfbb-7868-a463-4c1451960bb4";
 
 async function readFrom(url) {
   const res = await fetch(url, { cache: "no-store" });
